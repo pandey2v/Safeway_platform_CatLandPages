@@ -177,7 +177,7 @@ const contract=c=>CONTRACT[c.type]||{kind:'static_multi',label:'Content'};
 
 const CONTENT_MODES={static:'Static image + deep link',product:'Product content'};
 const SRC={manual:{n:'Manual curation'},algo:{n:'Algorithmic feed'},tag:{n:'Dynamic tagging'}};
-const POOL={'Buy it again':['🧺 Milk','🥚 Eggs','🍞 Bread','🍌 Bananas','🧀 Cheese','🥑 Avocado','🍗 Chicken','🥛 Yogurt'],'Trending':['🍓 Berries','🥩 Steak','🍕 Pizza','🥗 Salad','🍫 Cocoa','🥤 Soda','🍝 Pasta','🧅 Onions'],'Sale':['🏷️ BOGO','💸 Weekly','🥫 Soups','🍿 Snacks','🧴 Care','🥓 Bacon','🍦 Ice cream','☕ Coffee'],'Game Day':['🍗 Wings','🥔 Chips','🧀 Dips','🍺 Beer','🥕 Veggies','🌭 Hot dogs','🍕 Pizza','🥤 Soda']};
+const POOL={'Buy it again':['🧺 Milk','🥚 Eggs','🍞 Bread','🍌 Bananas','🧀 Cheese','🥑 Avocado','🍗 Meat','🥛 Yogurt'],'Trending':['🍓 Berries','🥩 Steak','🍕 Pizza','🥗 Salad','🍫 Cocoa','🥤 Soda','🍝 Pasta','🧅 Onions'],'Sale':['🏷️ BOGO','💸 Weekly','🥫 Soups','🍿 Snacks','🧴 Care','🥓 Bacon','🍦 Ice cream','☕ Coffee'],'Game Day':['🍗 Wings','🥔 Chips','🧀 Dips','🍺 Beer','🥕 Veggies','🌭 Hot dogs','🍕 Pizza','🥤 Soda']};
 let AS=[['Game day wings','🍗','#5e1b07'],['Fresh bakery','🍞','#a8743a'],['Farm produce','🥑','#3f7d3a'],['Pantry staples','🥫','#8a2d2d'],['Birthday cakes','🎂','#c2417a'],['Baby care','🍼','#d9a441']].map((a,i)=>({id:i+1,name:a[0],e:a[1],col:a[2],img:null,sizes:['2:1','1:1','16:9']}));
 let aid=7;
 const RATIO={'9:16':'9/16','1:1':'1/1','16:9':'16/9','2:1':'2/1'},SZ={'9:16':'Portrait 9:16','1:1':'Square 1:1','16:9':'Wide 16:9','2:1':'Banner 2:1'};
