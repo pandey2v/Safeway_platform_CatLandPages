@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Safeway Experience Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f6f5;--panel:#fff;--ink:#222;--mut:#6b6b6b;--line:#e4e2e0;--red:#9b0000;--maroon:#5e1b07;--soft:#ffe3e3;--ok:#1f8a4c;--warn:#b7791f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#181514;--panel:#221e1d;--ink:#f1ebe8;--mut:#a39a95;--line:#3a3331;--soft:#3a1c1e;--red:#ff6b6b}}
+:root[data-theme=dark]{--bg:#181514;--panel:#221e1d;--ink:#f1ebe8;--mut:#a39a95;--line:#3a3331;--soft:#3a1c1e;--red:#ff6b6b}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px 'Nunito Sans',system-ui,sans-serif;overflow:hidden}
+button,input,select{font:inherit;color:inherit}
+#app{display:grid;grid-template-columns:200px 1fr;height:100%}
+nav{background:var(--panel);border-right:1px solid var(--line);color:var(--ink);padding:16px 10px;display:flex;flex-direction:column;gap:2px}
+nav h1{font-family:Poppins,sans-serif;color:var(--red);font-weight:600;font-size:17px;margin:0 8px 16px;line-height:1.2}nav h1 small{display:block;font-weight:400;opacity:.65;font-size:12px}
+nav button{background:none;border:0;color:var(--ink);text-align:left;padding:10px 12px;border-radius:99px;cursor:pointer;transition:.15s}
+nav button:hover{background:var(--bg)}nav button.on{background:var(--soft);color:var(--red);font-weight:700}
+.role{margin-top:auto;padding:8px;font-size:12px;color:var(--mut)}.role select{margin-top:4px;border-radius:99px}
+main{display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden}
+header{display:flex;align-items:center;gap:10px;padding:10px 18px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
+header h2{font-family:Poppins,sans-serif;font-weight:500;margin:0;font-size:18px;flex:1}
+.btn{border:1px solid var(--red);color:var(--red);background:var(--panel);padding:8px 16px;border-radius:99px;font-weight:700;cursor:pointer;transition:.15s}.btn:hover{border-color:var(--red)}
+.btn.p{background:var(--red);color:#fff}.btn.p:hover{filter:brightness(1.1)}.btn[disabled]{opacity:.45;cursor:not-allowed}
+.badge{padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700;background:#eee;color:#555}
+.b-Draft{background:#e9e5e2;color:#5b524e}.b-Scheduled{background:#fdf0d4;color:var(--warn)}.b-Active{background:#d9f2e3;color:var(--ok)}.b-Expired{background:#f6d9d9;color:var(--red)}.b-InReview{background:#e1e9fb;color:#2b5bd7}
+.work{flex:1 1 auto;display:grid;grid-template-columns:minmax(340px,1fr) 400px;min-height:0;height:0;overflow:hidden}
+.left{overflow-y:scroll;overflow-x:hidden;padding:16px 18px 120px;border-right:1px solid var(--line);min-height:0;height:100%;max-height:100%;overscroll-behavior:contain;scrollbar-gutter:stable;touch-action:pan-y}
+.right{overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px 14px 80px;background:var(--bg);min-height:0;scrollbar-gutter:stable}
+.tabs{display:flex;gap:4px;margin-bottom:12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tabs button{font-weight:600;background:none;border:0;padding:8px 10px;cursor:pointer;color:var(--mut);border-bottom:2px solid transparent}.tabs button.on{color:var(--red);border-color:var(--red);font-weight:600}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
+.lib{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lib .card{cursor:grab;margin:0;display:flex;flex-direction:column;gap:6px;transition:.15s}.lib .card:hover{border-color:var(--red);transform:translateY(-1px)}
+.lib .ic{height:54px;border-radius:8px;background:var(--soft);display:grid;place-items:center;font-size:24px}
+label{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px}
+input,select{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--red);outline-offset:1px}
+.row{display:flex;gap:8px}.row>*{flex:1}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line)}th{color:var(--mut);font-weight:500}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kpi div{background:var(--soft);border-radius:8px;padding:10px}.kpi b{font-size:18px;display:block}
+.assets{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.assets button{border:2px solid transparent;border-radius:8px;padding:0;overflow:hidden;cursor:pointer;background:none}.assets button.on{border-color:var(--red)}
+.assets i{display:grid;place-items:center;height:64px;font-size:26px;font-style:normal}.assets span{display:block;font-size:11px;padding:3px;color:var(--mut)}
+/* phone */
+.seg{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:2px}.seg button{border:0;background:none;padding:5px 12px;border-radius:99px;font-weight:600;cursor:pointer}.seg button.on{background:var(--red);color:#fff}
+.phone{width:320px;height:640px;border-radius:44px;background:#111;padding:10px;position:relative;flex:none;box-shadow:0 12px 30px #0003;transition:.25s}
+.phone.android{border-radius:28px;width:316px}
+.phone .scr{background:#fff;color:#231f1e;height:100%;border-radius:34px;overflow:hidden;display:flex;flex-direction:column}
+.android .scr{border-radius:20px}
+.notch{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:90px;height:24px;background:#111;border-radius:20px;z-index:3}.android .notch{width:14px;height:14px;top:20px;border-radius:50%}
+.sb{height:44px;background:#ffd6d6;display:flex;justify-content:space-between;align-items:flex-end;padding:0 22px 4px;font-size:11px;font-weight:700;flex:none}
+.sh{background:#ffd6d6;padding:2px 12px 8px;flex:none}.sh div{background:#fff;border-radius:99px;padding:6px 12px;font-size:11px;color:#777;display:flex;justify-content:space-between}
+.feed{flex:1;overflow:auto;padding-bottom:10px}
+.tab{display:flex;justify-content:space-around;background:#f7f7f7;border-top:1px solid #eee;padding:8px 0 12px;font-size:10px;color:#777;flex:none}.tab b{color:#000}
+.mc{position:relative;margin:8px 10px;border-radius:12px;cursor:pointer;outline:2px solid transparent;transition:.15s}
+.mc:hover{outline-color:#b3121b55}.mc.sel{outline-color:var(--red)}.mc.over{outline:2px dashed var(--red);background:#b3121b12}
+.mc .tools{display:none;position:absolute;top:-10px;right:4px;gap:2px;z-index:2;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1px}
+.mc.sel .tools{display:flex}.tools button{border:0;background:none;cursor:pointer;padding:2px 6px;font-size:12px}
+.mc h4{font-family:Poppins,sans-serif;font-weight:500;margin:2px 4px 8px;font-size:16px}.mc h4:after{content:"View all";float:right;font:600 11px "Nunito Sans";color:#9b0000;text-decoration:underline;margin-top:4px}
+.ig{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:8px 4px}.ig div{text-align:center;font-size:9px}.ig i{display:grid;place-items:center;width:100%;aspect-ratio:1;border-radius:50%;background:#f4efeb;font-style:normal;font-size:22px;margin-bottom:3px}
+.bn{font-family:Poppins,sans-serif;border-radius:20px;padding:16px;color:#fff;min-height:110px;display:flex;flex-direction:column;justify-content:center;gap:4px}.bn b{font-size:18px}.bn u{font:600 12px "Nunito Sans"}
+.sp{font-family:Poppins,sans-serif;display:grid;grid-template-columns:1fr 1fr;border-radius:20px;overflow:hidden;min-height:110px}.sp>div{padding:14px;display:flex;flex-direction:column;justify-content:center;gap:4px}.sp b{font-size:15px}.sp u{font:600 12px "Nunito Sans"}.sp>i{display:grid;place-items:center;font-size:44px;font-style:normal}
+.cr{display:flex;gap:8px;overflow:hidden;padding:0 2px}.cr.t div{flex:none;width:92px;border:1px solid #eee;border-radius:16px;padding:8px;text-align:center;font-size:10px;background:#fff}.cr.t i{display:block;font-size:30px;font-style:normal}
+.gv{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 2px}.pc{border:1px solid #eee;border-radius:16px;padding:8px;background:#fff;font-size:11px;display:flex;flex-direction:column;gap:2px;min-width:0}.pc i{font-style:normal;font-size:34px;background:#f4efeb;border-radius:12px;display:grid;place-items:center;aspect-ratio:1;margin-bottom:4px}.pc b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pc span{color:#666}.pc em{font-style:normal;color:#9b0000;border:1px solid #9b0000;border-radius:99px;text-align:center;padding:2px;font-weight:700;margin-top:4px}.cr .pc{flex:none;width:calc((100% - 8px*var(--g))/var(--n))}.bs{flex:none;width:82%;border-radius:16px;overflow:hidden;position:relative;color:#fff}.bs b{position:absolute;left:10px;bottom:8px;font-size:12px;text-shadow:0 1px 3px #0009}.bs>div{color:#fff}.acards{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}.ac{border:2px solid transparent;background:var(--panel);border-radius:16px;padding:6px;cursor:pointer;text-align:left;box-shadow:0 0 0 1px var(--line)}.ac.on{border-color:var(--red)}.ac>div{border-radius:10px;overflow:hidden}.ac b{display:block;margin-top:6px;font-size:12px}.ac small{color:var(--mut)}.chip{border:1px solid var(--line);background:var(--panel);border-radius:99px;padding:4px 10px;cursor:pointer;font-weight:600}.chip.on{background:var(--soft);border-color:var(--red);color:var(--red)}.lock{position:absolute;top:6px;left:6px;background:#0008;color:#fff;font-size:9px;padding:2px 6px;border-radius:99px}
+.empty{padding:40px 20px;text-align:center;color:#999;font-size:12px}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;opacity:0;transition:.25s;pointer-events:none;z-index:9;max-width:90vw}.toast.on{opacity:1}
+@media(max-width:1000px){body{overflow:auto}main{overflow:visible}.work{height:auto;overflow:visible}.left{height:auto;max-height:none;overflow:visible}#app{grid-template-columns:1fr;height:auto}nav{flex-direction:row;flex-wrap:wrap}.role{margin:0}.work{grid-template-columns:1fr}.left{border:0}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* v4: AI Copilot + Shoppable Stories */
+.ai-bar{display:flex;gap:8px;align-items:center;flex:1;max-width:520px;margin:0 10px}
+.ai-bar input{margin:0;background:var(--bg)}
+.ai-drawer{position:fixed;right:18px;top:70px;width:min(430px,calc(100vw - 36px));max-height:calc(100vh - 90px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:0 18px 50px #0004;padding:14px;z-index:20;display:none}
+.ai-drawer.on{display:block}.ai-head{display:flex;justify-content:space-between;align-items:center;gap:8px}.ai-msg{background:var(--bg);border-radius:12px;padding:10px;margin:10px 0;font-size:12px}
+.ai-thinking{display:flex;gap:5px;align-items:center;color:var(--mut);font-size:12px}.ai-thinking i{width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulse 1s infinite alternate}.ai-thinking i:nth-child(2){animation-delay:.2s}.ai-thinking i:nth-child(3){animation-delay:.4s}@keyframes pulse{to{opacity:.2}}
+.story-cover{min-height:170px;border-radius:20px;overflow:hidden;position:relative;display:grid;place-items:center;color:#fff;background:linear-gradient(145deg,#6f170f,#d65c42);cursor:pointer}
+.story-cover .play{font-size:42px}.story-cover .story-copy{position:absolute;left:14px;bottom:14px}.story-cover .story-copy b{display:block;font:600 17px Poppins}.story-cover .story-copy span{font-size:11px}
+.story-modal{position:fixed;inset:0;background:#000c;z-index:30;display:none;place-items:center;padding:18px}.story-modal.on{display:grid}
+.story-phone{width:min(360px,92vw);height:min(700px,88vh);background:#181818;border-radius:30px;overflow:hidden;position:relative;color:#fff;box-shadow:0 20px 70px #0008}
+.story-frame{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:22px;background:linear-gradient(160deg,#742014,#e88957)}
+.story-progress{position:absolute;left:12px;right:12px;top:12px;display:flex;gap:4px;z-index:2}.story-progress i{height:3px;flex:1;background:#ffffff55;border-radius:99px}.story-progress i.on{background:#fff}
+.story-close{position:absolute;right:14px;top:24px;z-index:3;border:0;background:#0006;color:#fff;border-radius:99px;width:32px;height:32px;cursor:pointer}
+.story-nav{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;z-index:1}.story-nav button{border:0;background:transparent}
+.story-content{position:relative;z-index:2;pointer-events:none}.story-content h3{font:600 24px Poppins;margin:0 0 6px}.story-content p{margin:0 0 14px}
+.product-sticker{pointer-events:auto;background:#fff;color:#222;border-radius:14px;padding:9px 11px;display:inline-flex;align-items:center;gap:8px;font-weight:700;box-shadow:0 5px 18px #0004;cursor:pointer;border:0}.product-sticker small{display:block;color:#777;font-weight:600}
+.frames{display:flex;flex-direction:column;gap:8px}.frame-row{display:grid;grid-template-columns:42px 1fr auto;gap:8px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:12px}.frame-thumb{height:54px;border-radius:9px;background:linear-gradient(145deg,#7d2117,#e6905f);display:grid;place-items:center;color:#fff;font-size:20px}
+
+
+.analytics-id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;background:var(--bg);padding:6px 8px;border-radius:8px;word-break:break-all}
+.track-preview{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;line-height:1.5;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;overflow:auto}
+
+.content-item{border:1px solid var(--line);border-radius:12px;padding:10px;margin:8px 0;background:var(--panel)}
+.content-item-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.item-preview{display:flex;gap:8px;overflow:hidden;padding:4px 2px}
+.item-preview>div{flex:none;min-width:82px;max-width:110px;border:1px solid #eee;border-radius:14px;padding:9px 7px;background:#fff;text-align:center;font-size:10px;color:#222}
+.item-preview i{display:grid;place-items:center;font-style:normal;font-size:24px;height:34px}
+.item-preview b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* v9 RBAC + approvals */
+.approval-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+.approval-card{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--panel)}
+.approval-card h4{margin:0 0 5px;font-family:Poppins;font-weight:600}
+.meta{font-size:11px;color:var(--mut);line-height:1.6}
+.role-pill{display:inline-block;padding:3px 8px;border-radius:99px;background:var(--soft);font-size:11px;font-weight:700}
+.audit{font-size:12px;padding:7px 0;border-bottom:1px solid var(--line)}
+.user-row{display:grid;grid-template-columns:1.4fr 1fr 1fr auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+@media(max-width:700px){.user-row{grid-template-columns:1fr}.approval-grid{grid-template-columns:1fr}}
+
+.approval-toolbar{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:8px;margin:10px 0 14px}
+.approval-list{display:flex;flex-direction:column;gap:9px}
+.approval-row{border:1px solid var(--line);border-radius:13px;background:var(--panel);padding:11px}
+.approval-row-top{display:grid;grid-template-columns:minmax(170px,1.4fr) minmax(120px,.8fr) minmax(110px,.7fr) minmax(135px,.9fr);gap:10px;align-items:center}
+.approval-component{display:flex;gap:9px;align-items:center}
+.approval-thumb{width:62px;height:42px;border-radius:8px;background:linear-gradient(135deg,#f3d7d1,#fff1dc);display:grid;place-items:center;font-size:21px;flex:none}
+.approval-details{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.approval-row.open .approval-details{display:block}
+.mini-preview{border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:10px;display:flex;gap:7px;overflow:hidden;margin-bottom:10px}
+.mini-preview>div{min-width:70px;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:8px;text-align:center;font-size:10px}
+@media(max-width:800px){.approval-toolbar,.approval-row-top{grid-template-columns:1fr}.approval-thumb{width:52px}}
+
+.admin-tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:14px}
+.admin-tabs button{border:0;background:none;padding:9px 12px;color:var(--mut);cursor:pointer;font-weight:700;border-bottom:2px solid transparent}
+.admin-tabs button.on{color:var(--red);border-bottom-color:var(--red)}
+.role-table-head,.role-row{display:grid;grid-template-columns:1.4fr 1fr auto;gap:10px;align-items:center}
+.role-table-head{padding:7px 10px;color:var(--mut);font-size:10px;font-weight:800;text-transform:uppercase}
+.role-row{padding:10px;border-top:1px solid var(--line)}
+.danger{color:var(--red);border-color:var(--red)}
+@media(max-width:700px){.role-table-head{display:none}.role-row{grid-template-columns:1fr}.admin-tabs{overflow:auto}}
+
+.work.fullpage{display:block;height:auto;overflow:auto}
+.work.fullpage .left{height:auto;max-height:none;overflow:visible;border-right:0;padding-bottom:80px}
+.work.fullpage .right{display:none}
+</style></head>
+<body><div id="app">
+<nav id="nav"></nav>
+<main>
+<header><h2 id="ttl">Layout Builder</h2>
+<div class="ai-bar"><input id="aiQuick" placeholder="✦ Ask AI to build layout…"><button class="btn p" id="aiOpen">Generate</button></div>
+<span id="stb" class="badge"></span><button class="btn" id="prev">Preview link</button><button class="btn p" id="pub"></button></header>
+<div class="work" id="work"><section class="left" id="left"></section>
+<section class="right">
+<div class="row" style="flex:none;gap:8px;width:auto">
+<div class="seg" id="plat"><button data-v="ios" class="on">iPhone 15 Pro</button><button data-v="android">Pixel</button></div>
+</div>
+
+<div class="phone" id="phone"><div class="notch"></div><div class="scr"><div class="sb"><span>11:09</span><span>5G ▮▮▮</span></div><div class="sh"><div><span>🔍 Search products, deals…</span><span>✦ AI</span></div></div><div class="feed" id="feed"></div><div class="tab"><span><b>Home</b></span><span>Member</span><span>Deals</span><span>My Lists</span><span>More</span></div></div></div>
+</section></div></main></div>
+<aside class="ai-drawer" id="aiDrawer">
+<div class="ai-head"><div><b>✦ Experience Copilot</b><div style="font-size:11px;color:var(--mut)">Describe the experience, not the components.</div></div><button class="btn" id="aiClose">Close</button></div>
+<div class="ai-msg">Try: “Create a 3-row layout for a rainy weekend featuring soup and comfort snacks, targeted at Gold members.”</div>
+<label>What should the page accomplish?</label>
+<input id="aiPrompt" value="Create a 3-row layout for a rainy weekend featuring soup and comfort snacks, targeted at Gold members">
+<div id="aiState" style="margin:10px 0"></div>
+<button class="btn p" id="aiGenerate" style="width:100%">Generate proposed layout</button>
+<div id="aiProposal"></div>
+</aside>
+<div class="story-modal" id="storyModal"><div class="story-phone">
+<div class="story-progress" id="storyProgress"></div><button class="story-close" id="storyClose">✕</button>
+<div class="story-frame" id="storyFrame"></div><div class="story-nav"><button id="storyPrev" aria-label="Previous"></button><button id="storyNext" aria-label="Next"></button></div>
+</div></div>
+<div class="toast" id="toast"></div>
+<script>
+const $=s=>document.querySelector(s);
+const TYPES={story:{n:'Shoppable Story / Quick Look',e:'▯',d:'Immersive 9:16 media + product stickers'},icon:{n:'Circular Icon Grid',e:'⭕',d:'4-up category circles'},banner:{n:'Full-Width Banner',e:'🖼️',d:'Uses a library banner'},split:{n:'Split Promotional Card',e:'◧',d:'Text + library banner'},bcar:{n:'Banner Carousel (1.2)',e:'🎞️',d:'Swipeable library banners'},carousel:{n:'Tile Carousel',e:'🎠',d:'Compact category tiles'},car25:{n:'Product Carousel 2.5',e:'🃏',d:'2.5 product cards visible'},car35:{n:'Product Carousel 3.5',e:'🗂️',d:'3.5 product cards visible'},grid:{n:'Product Grid View',e:'▦',d:'2-column product grid'}};
+const USES_ASSET=['banner','split','bcar'];
+const CONTRACT={
+ banner:{kind:'static_single',label:'Image + deep link',title:false,copy:false},
+ split:{kind:'static_single',label:'Image + copy + deep link',title:true,copy:true},
+ bcar:{kind:'static_multi',label:'Multiple images + deep links',title:true},
+ icon:{kind:'static_multi',label:'Image + label + deep link items',title:true},
+ carousel:{kind:'static_multi',label:'Image + label + deep link items',title:true},
+ car25:{kind:'products',label:'Product IDs',title:true},
+ car35:{kind:'products',label:'Product IDs',title:true},
+ grid:{kind:'products',label:'Product IDs',title:true},
+ story:{kind:'story',label:'Media frames + Product IDs',title:true}
+};
+const contract=c=>CONTRACT[c.type]||{kind:'static_multi',label:'Content'};
+
+const CONTENT_MODES={static:'Static image + deep link',product:'Product content'};
+const SRC={manual:{n:'Manual curation'},algo:{n:'Algorithmic feed'},tag:{n:'Dynamic tagging'}};
+const POOL={'Buy it again':['🧺 Milk','🥚 Eggs','🍞 Bread','🍌 Bananas','🧀 Cheese','🥑 Avocado','🍗 Chicken','🥛 Yogurt'],'Trending':['🍓 Berries','🥩 Steak','🍕 Pizza','🥗 Salad','🍫 Cocoa','🥤 Soda','🍝 Pasta','🧅 Onions'],'Sale':['🏷️ BOGO','💸 Weekly','🥫 Soups','🍿 Snacks','🧴 Care','🥓 Bacon','🍦 Ice cream','☕ Coffee'],'Game Day':['🍗 Wings','🥔 Chips','🧀 Dips','🍺 Beer','🥕 Veggies','🌭 Hot dogs','🍕 Pizza','🥤 Soda']};
+let AS=[['Game day wings','🍗','#5e1b07'],['Fresh bakery','🍞','#a8743a'],['Farm produce','🥑','#3f7d3a'],['Pantry staples','🥫','#8a2d2d'],['Birthday cakes','🎂','#c2417a'],['Baby care','🍼','#d9a441']].map((a,i)=>({id:i+1,name:a[0],e:a[1],col:a[2],img:null,sizes:['2:1','1:1','16:9']}));
+let aid=7;
+const RATIO={'9:16':'9/16','1:1':'1/1','16:9':'16/9','2:1':'2/1'},SZ={'9:16':'Portrait 9:16','1:1':'Square 1:1','16:9':'Wide 16:9','2:1':'Banner 2:1'};
+const asset=id=>AS.find(a=>a.id==id)||AS[0];
+const bg=a=>a.img?`linear-gradient(90deg,#0008,#0000),url('${a.img}') center/cover`:a.col;
+const art=(a,sz,ex='')=>`<div style="aspect-ratio:${RATIO[sz]};background:${bg(a)};display:grid;place-items:center;font-size:30px;${ex}">${a.img?'':a.e}</div>`;
+const LINKS={pdp:'Product detail (product ID)',search:'Search query',plp:'Filtered PLP',recipe:'Recipe detail view',ext:'External link'};
+const COH=['Everyone','Keto-preference','Gold Loyalty','New shopper'];
+let uid=1,now=new Date();
+const d=(o)=>{const x=new Date(Date.now()+o*864e5);return x.toISOString().slice(0,16)};
+const mk=(type,o={})=>{const id=uid++;return {id,type,componentId:`cmp_${String(id).padStart(4,'0')}`,analyticsName:'',contentMode:USES_ASSET.includes(type)?'static':'product',title:{story:'Rainy Day Comfort',icon:'Shop by category',banner:'Game day made easy',split:'Signature Apps',carousel:'Buy it again',car25:'Weekly deals',car35:'Fresh picks',grid:'Recommended for you',bcar:'Featured offers'}[type],sub:{banner:'Ready-to-eat snacks for the whole crowd.',split:'Thousands of quality foods for the win.'}[type]||'',src:['carousel','car35','grid'].includes(type)?'feed':'manual',feed:type=='carousel'?'buyagain':type=='grid'?'recs':'trending',batchSrc:'sheet',pulledAt:null,idsText:type=='car25'?'101007, 101013, 101014, 101015, 101011, 101016':'101001, 101002, 101003, 101004, 101005, 101006, 101007, 101008',csvIds:[],csvName:'',link:'search',linkVal:'safeway://search?s=game%20day%20snacks',asset:type=='split'?2:1,size:type=='split'?'1:1':'2:1',start:d(-1),end:d(14),schedules:[{id:1,start:d(-1),end:d(14)}],saved:false,...o,storyFrames:type=='story'?[{name:'Warm up tonight',pid:'101020'},{name:'Comfort-food essentials',pid:'101013'},{name:'One-tap pantry add',pid:'101018'}]:[],
+repeatDays:0,
+staticItems:[
+ {id:1,label:'Milk',deepLink:'safeway://plp/milk'},
+ {id:2,label:'Bakery',deepLink:'safeway://plp/bakery'},
+ {id:3,label:'Produce',deepLink:'safeway://plp/produce'}
+],
+seed:id*37,...o}};
+let S={comps:[mk('icon',{saved:true}),mk('banner',{saved:true}),mk('carousel',{saved:true})],sel:null,view:'builder',tab:'lib',plat:'ios',mode:'def',persona:'Keto-preference',role:'Editor',review:false,published:false,pageSchedule:{enabled:false,name:'Game Day Takeover',start:d(2),end:d(4),override:true}};
+
+Object.assign(S,{
+ approvalFilter:'All',
+ approvalSort:'Newest',
+ approvalSearch:'',
+ openApproval:null,
+ approvals:[
+  {id:9001,page:'Home browse page',version:'Fall Savings v3',by:'Maya Chen',at:'Sep 29, 2026, 10:20 AM',components:6,component:'Banner Carousel',detail:'Fall Savings hero rotation · 3 slides',window:'Sep 30, 8:00 AM – Oct 3, 11:59 PM',status:'Pending',decision:''},
+  {id:9002,page:'Home browse page',version:'Weekend Essentials v2',by:'Maya Chen',at:'Sep 27, 2026, 3:40 PM',components:5,component:'Product Carousel 2.5',detail:'Weekend Essentials · 8 Product IDs',window:'Sep 28 – Sep 29',status:'Approved',decision:'Approved by Jordan Lee'},
+  {id:9003,page:'Deals page',version:'Game Day v1',by:'Maya Chen',at:'Sep 25, 2026, 1:15 PM',components:7,component:'Tile Carousel',detail:'Game Day Categories · 6 tiles',window:'Sep 26 – Sep 27',status:'Changes requested',decision:'Update hero creative and resubmit.'}
+ ],
+ users:[
+  {id:1,name:'Maya Chen',email:'maya@safeway.com',role:'Editor',status:'Active'},
+  {id:2,name:'Jordan Lee',email:'jordan@safeway.com',role:'Approver',status:'Active'},
+  {id:3,name:'Alex Morgan',email:'alex@safeway.com',role:'Admin',status:'Active'}
+ ],
+ audit:[{at:'Sep 29, 2026, 9:00 AM',text:'Workspace access initialized'}]
+});
+
+const stats=c=>{const r=n=>((c.seed*n)%97)/97;return{imp:Math.round(20000+r(7)*180000),ctr:+(1.2+r(13)*6.5).toFixed(2),val:Math.round(3000+r(29)*48000)}};
+const windows=c=>(c.schedules&&c.schedules.length?c.schedules:[{id:1,start:c.start,end:c.end}]);
+const pageActive=()=>S.pageSchedule.enabled&&Date.now()>=new Date(S.pageSchedule.start)&&Date.now()<=new Date(S.pageSchedule.end);
+const status=c=>{if(!c.saved)return'Draft';if(pageActive()&&S.pageSchedule.override)return'Active';const n=Date.now(),w=windows(c);if(w.some(x=>n>=new Date(x.start)&&n<=new Date(x.end)))return'Active';if(w.some(x=>n<new Date(x.start)))return'Scheduled';return'Expired'};
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),2200)};
+const cur=()=>S.comps.find(c=>c.id==S.sel);
+const CAT=[['101001','Whole milk','🥛',3.49],['101002','Large eggs','🥚',4.29],['101003','Sourdough bread','🍞',4.99],['101004','Bananas','🍌',.69],['101005','Cheddar cheese','🧀',3.99],['101006','Hass avocado','🥑',1.29],['101007','Chicken wings','🍗',8.99],['101008','Greek yogurt','🍦',1.19],['101009','Strawberries','🍓',4.49],['101010','Ribeye steak','🥩',14.99],['101011','Pepperoni pizza','🍕',6.99],['101012','Garden salad','🥗',3.79],['101013','Tortilla chips','🥔',3.29],['101014','Fresh salsa','🍅',3.49],['101015','Guacamole','🥑',4.99],['101016','Vanilla ice cream','🍨',5.49],['101017','Ground coffee','☕',9.99],['101018','Spaghetti','🍝',1.99],['101019','Baby formula','🍼',24.99],['101020','Birthday cake','🎂',12.99]].map(a=>({id:a[0],l:a[1],e:a[2],price:a[3],link:'safeway://pdp/'+a[0]}));
+const FEEDS={trending:{n:'Trending now',ids:['101009','101010','101011','101012','101007','101013']},buyagain:{n:'Buy it again (personalized)',ids:['101001','101002','101003','101004','101005','101006']},recs:{n:'Recommended for you',ids:['101015','101014','101013','101016','101017','101018']}};
+const BATCH={sheet:{n:'Merchandising sheet (nightly)',ids:['101007','101013','101014','101015','101008','101011']},pim:{n:'PIM export (hourly)',ids:['101019','101001','101002','101017','101020','101018']},promo:{n:'Promo planner (weekly)',ids:['101010','101011','101016','101009','101012','101005']}};
+const parseIds=t=>(t||'').split(/[\s,;]+/).filter(Boolean);
+const getIds=c=>c.src=='manual'?parseIds(c.idsText):c.src=='csv'?c.csvIds:c.src=='feed'?FEEDS[c.feed].ids:c.pulledAt?BATCH[c.batchSrc].ids:[];
+const prods=c=>getIds(c).map(i=>CAT.find(p=>p.id==i)).filter(Boolean);
+const split=s=>{const i=s.indexOf(' ');return[s.slice(0,i),s.slice(i+1)]};
+function phoneComp(c){
+ const a=asset(c.asset),R=RATIO[c.size]||'2/1',it=prods(c),H=`<h4>${c.title}</h4>`;
+ const cm=c.contentMode||(USES_ASSET.includes(c.type)?'static':'product');
+ const pr=p=>`<div class="pc"><i>${p.e}</i><b>${p.l}</b><span>$${p.price.toFixed(2)}</span><em>Add</em></div>`;
+ const B=x=>it.length?H+x:H+'<div class="empty">Add product IDs to fill this component.</div>';
+ let h='';
+ if(c.type=='icon')h=B(`<div class="ig">${it.slice(0,8).map(p=>`<div><i>${p.e}</i>${p.l}</div>`).join('')}</div>`);
+ if(c.type=='banner')h=`<div class="bn" style="aspect-ratio:${R};background:${bg(a)}"><b>${c.title}</b>${a.img?'':`<span style="position:absolute;right:14px;top:14px;font-size:44px">${a.e}</span>`}</div>${(c.staticItems||[]).length?`<div class="item-preview">${(c.staticItems||[]).map((x,i)=>`<div title="${x.deepLink||''}"><i>${['🥛','🍞','🥑','🥫'][i%4]}</i><b>${x.label||'Untitled'}</b><span>View</span></div>`).join('')}</div>`:''}`;
+ if(c.type=='split')h=`<div class="sp" style="background:#fcf1ee"><div><b>${c.title}</b><span style="font-size:11px;color:#666">${c.sub}</span><u>Shop now</u></div><i style="background:${bg(a)};aspect-ratio:${R}">${a.img?'':a.e}</i></div>`;
+ if(c.type=='carousel')h=B(`<div class="cr t">${it.slice(0,8).map(p=>`<div><i>${p.e}</i>${p.l}</div>`).join('')}</div>`);
+ if(c.type=='car25'||c.type=='car35'){const n=c.type=='car25'?2.5:3.5;h=B(`<div class="cr" style="--n:${n};--g:${Math.floor(n)}">${it.slice(0,8).map(pr).join('')}</div>`)}
+ if(c.type=='grid')h=B(`<div class="gv">${it.slice(0,4).map(pr).join('')}</div>`);
+ if(c.type=='story'){const sf=(c.storyFrames||[])[0],p=sf&&CAT.find(x=>x.id==sf.pid);h=`<div class="story-cover" data-story="${c.id}"><div class="play">▶</div><div class="story-copy"><b>${c.title}</b><span>${(c.storyFrames||[]).length} frames · Tap for Quick Look${p?' · '+p.l:''}</span></div></div>`}
+  if(c.type=='bcar')h=`<div class="cr">${[a,...AS.filter(x=>x.id!=a.id)].slice(0,4).map(x=>`<div class="bs"><div style="aspect-ratio:${R};background:${bg(x)};display:grid;place-items:center;font-size:40px">${x.img?'':x.e}</div><b>${x.name}</b></div>`).join('')}</div>`;
+ if(cm=='static'&&!USES_ASSET.includes(c.type)){const si=c.staticItems||[];h=`${H}<div class="item-preview">${si.map((x,i)=>`<div title="${x.deepLink||''}"><i>${['🥛','🍞','🥑','🥫','🍓','🧀'][i%6]}</i><b>${x.label||'Untitled'}</b><span>View</span></div>`).join('')}</div>`}
+ if(cm=='product'&&USES_ASSET.includes(c.type))h=B(`<div class="cr" style="--n:2.5;--g:2">${it.slice(0,8).map(pr).join('')}</div>`);
+  // Component contract is authoritative for preview.
+ const ct=contract(c);
+ if(ct.kind=='static_multi'){
+   const si=c.staticItems||[];
+   const cards=si.map((x,i)=>{const aa=asset(x.assetId||c.asset);return `<div title="${x.deepLink||''}"><i style="background:${bg(aa)}">${aa.img?'':aa.e}</i><b>${x.label||'Untitled'}</b></div>`}).join('');
+   if(c.type=='icon')h=H+`<div class="ig">${si.map((x,i)=>{const aa=asset(x.assetId||c.asset);return `<div><i style="background:${bg(aa)}">${aa.img?'':aa.e}</i>${x.label||'Untitled'}</div>`}).join('')}</div>`;
+   else if(c.type=='bcar')h=H+`<div class="cr">${si.map(x=>{const aa=asset(x.assetId||c.asset);return `<div class="bs"><div style="aspect-ratio:2/1;background:${bg(aa)};display:grid;place-items:center;font-size:36px">${aa.img?'':aa.e}</div><b>${x.label||aa.name}</b></div>`}).join('')}</div>`;
+   else h=H+`<div class="cr t">${cards}</div>`;
+ }
+ if(ct.kind=='products'){
+   const n=c.type=='car25'?2.5:c.type=='car35'?3.5:null;
+   if(c.type=='grid')h=B(`<div class="gv">${it.slice(0,4).map(pr).join('')}</div>`);
+   else if(n)h=B(`<div class="cr" style="--n:${n};--g:${Math.floor(n)}">${it.slice(0,8).map(pr).join('')}</div>`);
+ }
+
+  return`<div class="mc ${S.sel==c.id?'sel':''}" draggable="true" data-id="${c.id}"><div class="tools"><button data-a="up" title="Move up">▲</button><button data-a="dn" title="Move down">▼</button><button data-a="del" title="Delete">✕</button></div>${h}</div>`}
+function visible(c){if(S.mode=='def')return true;return c.cohort=='Everyone'||c.cohort==S.persona}
+function renderPhone(){
+ $('#phone').className='phone '+(S.plat=='android'?'android':'');
+ const list=S.comps.filter(c=>visible(c)&&(pageActive()&&S.pageSchedule.override?true:status(c)=='Active'||!c.saved));
+ $('#feed').innerHTML=list.length?list.map(phoneComp).join(''):'<div class="empty">Nothing to show.<br>Add a component from the library.</div>';
+ document.querySelectorAll('#plat button').forEach(b=>b.classList.toggle('on',b.dataset.v==S.plat));
+}
+function renderNav(){
+ const base=[['dash','Dashboard'],['builder','Layout Builder'],['lib','Component Library'],['camp','Campaigns'],['assets','Asset Library'],['ana','Analytics / Reporting']];
+ const extra=S.role=='Editor'?[]:S.role=='Approver'?[['approve','Approval Inbox']]:[['approve','Approval Inbox'],['access','Access Management']];
+ const N=[...base,...extra,['set','Settings']];
+ $('#nav').innerHTML=`<h1>Safeway<small>Experience Manager</small></h1>`+N.map(([k,l])=>`<button data-v="${k}" class="${S.view==k?'on':''}">${l}</button>`).join('')+`<div class="role">Signed in as<select id="role">${['Editor','Approver','Admin'].map(r=>`<option ${r==S.role?'selected':''}>${r}</option>`).join('')}</select></div>`;
+ $('#ttl').textContent=(N.find(n=>n[0]==S.view)||[null,'Dashboard'])[1];
+}
+function pageStatus(){
+ const st=S.published?'Active':S.review?'In review':'Draft';
+ $('#stb').textContent=st;$('#stb').className='badge b-'+st.replace(' ','');
+ const can=S.role!='Editor';
+ $('#pub').textContent=can?'Publish':(S.review?'In review':'Submit for approval');
+ $('#pub').disabled=(!can&&S.review)||S.published;
+}
+const opt=(o,v)=>Object.entries(o).map(([k,x])=>`<option value="${k}" ${k==v?'selected':''}>${x.n||x}</option>`).join('');
+function libView(){return`<p style="color:var(--mut);margin-top:0">Drag a block onto the phone or select it to add it at the bottom.</p><div class="lib">${Object.entries(TYPES).map(([k,t])=>`<div class="card" draggable="true" data-lib="${k}"><div class="ic">${t.e}</div><b>${t.n}</b><small style="color:var(--mut)">${t.d}</small><button class="btn" data-add="${k}">Add component</button></div>`).join('')}</div>`}
+const SRCS=[['manual','Product IDs'],['csv','CSV upload'],['feed','Feed (API)'],['batch','Batch update']];
+function resHTML(c){const ids=getIds(c);if(!ids.length)return'<p style="color:var(--mut)">No products yet.</p>';const ok=prods(c).length;return`<label>Resolved from product catalogue (${ok} of ${ids.length})</label><div style="max-height:230px;overflow:auto"><table>${ids.map(i=>{const p=CAT.find(x=>x.id==i);return p?`<tr><td style="font-size:20px">${p.e}</td><td>${p.l}<br><small style="color:var(--mut)">${p.id} · $${p.price.toFixed(2)}</small></td><td><small>${p.link}</small></td></tr>`:`<tr><td>⚠️</td><td>${i}</td><td style="color:var(--red)"><small>Not in catalogue, skipped</small></td></tr>`}).join('')}</table></div>`}
+function cfgView(){
+ const c=cur();if(!c)return`<div class="empty" style="color:var(--mut)">Select a component on the phone to edit its content, schedule and metrics.</div>`;
+ const sub=S.sub&&['content','sched','track','metrics'].includes(S.sub)?S.sub:'content';
+ const tabs=`<div class="tabs">${[['content','Content'],['sched','Schedule'],['track','Tracking'],['metrics','Metrics']].map(([k,l])=>`<button data-sub="${k}" class="${sub==k?'on':''}">${l}</button>`).join('')}</div>`;
+ let b='';
+ if(sub=='content'){
+  const a=asset(c.asset);
+  const items=c.staticItems||[];
+  const assetPicker=(selected)=>`<div class="acards" style="grid-template-columns:repeat(3,1fr)">${AS.map(x=>`<button class="ac ${String(x.id)==String(selected)?'on':''}" data-asset="${x.id}"><div>${art(x,'16:9')}</div><b>${x.name}</b></button>`).join('')}</div>`;
+  const productSource=()=>{
+    const body={
+      manual:`<label>Product IDs</label><input data-f="idsText" value="${c.idsText}" placeholder="101001, 101002, 101003"><p style="color:var(--mut);font-size:12px">Comma separated. Product ID is the only required product attribute.</p>`,
+      csv:`<label>CSV upload</label><label class="btn" style="display:inline-block;cursor:pointer;margin:0">Choose CSV<input type="file" id="csv" accept=".csv,text/csv,text/plain" hidden></label><p style="color:var(--mut);font-size:12px">${c.csvName?`${c.csvName}: ${c.csvIds.length} IDs imported.`:'CSV only needs a Product ID column.'}</p>`,
+      feed:`<label>Dynamic feed</label><select data-f="feed">${Object.entries(FEEDS).map(([k,f])=>`<option value="${k}" ${k==c.feed?'selected':''}>${f.n}</option>`).join('')}</select><p style="color:var(--mut);font-size:12px">API returns Product IDs. Catalogue resolves image, name, price and PDP deep link.</p>`,
+      batch:`<label>Batch source</label><select data-f="batchSrc">${Object.entries(BATCH).map(([k,f])=>`<option value="${k}" ${k==c.batchSrc?'selected':''}>${f.n}</option>`).join('')}</select><button class="btn p" data-a="pull" style="margin-top:8px">Pull from source</button>`
+    }[c.src];
+    return `<label>Product source</label><div class="row" style="flex-wrap:wrap">${SRCS.map(([k,l])=>`<button class="chip ${c.src==k?'on':''}" data-src="${k}" style="flex:none">${l}</button>`).join('')}</div>${body}<div id="res">${resHTML(c)}</div>`;
+  };
+  const intro=(name,desc)=>`<div style="padding:10px 12px;background:var(--bg);border-radius:12px;margin-bottom:12px"><b>${name}</b><div style="color:var(--mut);font-size:12px;margin-top:3px">${desc}</div></div>`;
+
+  if(c.type=='banner'){
+    b=intro('Banner · Image + deep link','A banner is a single clickable creative. No title, subtitle or product fields.')+
+      `<label>Banner image</label>${assetPicker(c.asset)}
+       <label>Deep link</label><input data-f="linkVal" value="${c.linkVal||''}" placeholder="Paste destination deep link">`;
+  }
+
+  if(c.type=='split'){
+    b=intro('Split promotional card','Copy + image + one destination.')+
+      `<label>Title</label><input data-f="title" value="${c.title}">
+       <label>Subtitle / supporting copy</label><input data-f="sub" value="${c.sub||''}">
+       <label>Image</label>${assetPicker(c.asset)}
+       <label>Deep link</label><input data-f="linkVal" value="${c.linkVal||''}" placeholder="Paste destination deep link">`;
+  }
+
+  if(c.type=='bcar'){
+    b=intro('Banner Carousel · Slides','Each slide has its own image and deep link.')+
+      `<label>Component title (optional)</label><input data-f="title" value="${c.title}">
+       ${items.map((x,i)=>`<div class="content-item"><div class="content-item-head"><b>Slide ${i+1}</b>${items.length>1?`<button class="btn" data-rmitem="${x.id}" style="padding:3px 9px">Remove</button>`:''}</div>
+       <label>Image</label><select data-item="${x.id}" data-if="assetId">${AS.map(z=>`<option value="${z.id}" ${String(x.assetId||c.asset)==String(z.id)?'selected':''}>${z.name}</option>`).join('')}</select>
+       <label>Deep link</label><input data-item="${x.id}" data-if="deepLink" value="${x.deepLink||''}" placeholder="Paste slide destination"></div>`).join('')}
+       <button class="btn" data-additem="1">+ Add slide</button>`;
+  }
+
+  if(c.type=='icon'){
+    b=intro('Circular Icon Grid · Category items','Section title plus repeatable category items. Each item owns its image, label and destination.')+
+      `<label>Component title</label><input data-f="title" value="${c.title}">
+       ${items.map((x,i)=>`<div class="content-item"><div class="content-item-head"><b>Category ${i+1}</b>${items.length>1?`<button class="btn" data-rmitem="${x.id}" style="padding:3px 9px">Remove</button>`:''}</div>
+       <label>Label</label><input data-item="${x.id}" data-if="label" value="${x.label||''}" placeholder="e.g. Milk">
+       <label>Icon / image</label><select data-item="${x.id}" data-if="assetId">${AS.map(z=>`<option value="${z.id}" ${String(x.assetId||c.asset)==String(z.id)?'selected':''}>${z.name}</option>`).join('')}</select>
+       <label>Deep link</label><input data-item="${x.id}" data-if="deepLink" value="${x.deepLink||''}" placeholder="Paste category / PLP deep link"></div>`).join('')}
+       <button class="btn" data-additem="1">+ Add category</button>`;
+  }
+
+  if(c.type=='carousel'){
+    b=intro('Tile Carousel · Image + deep-link items','Each tile is independently authored. No Product ID is required.')+
+      `<label>Component title</label><input data-f="title" value="${c.title}">
+       ${items.map((x,i)=>`<div class="content-item"><div class="content-item-head"><b>Tile ${i+1}</b>${items.length>1?`<button class="btn" data-rmitem="${x.id}" style="padding:3px 9px">Remove</button>`:''}</div>
+       <label>Label (optional)</label><input data-item="${x.id}" data-if="label" value="${x.label||''}">
+       <label>Image</label><select data-item="${x.id}" data-if="assetId">${AS.map(z=>`<option value="${z.id}" ${String(x.assetId||c.asset)==String(z.id)?'selected':''}>${z.name}</option>`).join('')}</select>
+       <label>Deep link</label><input data-item="${x.id}" data-if="deepLink" value="${x.deepLink||''}" placeholder="Paste tile destination"></div>`).join('')}
+       <button class="btn" data-additem="1">+ Add tile</button>`;
+  }
+
+  if(c.type=='car25'){
+    b=intro('Product Carousel 2.5 · Product list','2.5 product cards are visible. Author only Product IDs; PDP content resolves from catalogue.')+
+      `<label>Component title</label><input data-f="title" value="${c.title}">${productSource()}`;
+  }
+
+  if(c.type=='car35'){
+    b=intro('Product Carousel 3.5 · Product list','3.5 compact product cards are visible. Author only Product IDs.')+
+      `<label>Component title</label><input data-f="title" value="${c.title}">${productSource()}`;
+  }
+
+  if(c.type=='grid'){
+    b=intro('Product Grid · Product list','Two-column product grid. Author only Product IDs.')+
+      `<label>Component title</label><input data-f="title" value="${c.title}">${productSource()}`;
+  }
+
+  if(c.type=='story'){
+    const frames=c.storyFrames||[];
+    b=intro('Shoppable Story · Media + tagged products','Each frame owns media and can tag a Product ID. Product details resolve from catalogue.')+
+      `<label>Story title</label><input data-f="title" value="${c.title}">
+       ${frames.map((f,i)=>{const p=CAT.find(x=>x.id==f.pid);return `<div class="content-item"><div class="content-item-head"><b>Frame ${i+1}</b><button class="btn" data-rmframe="${i}" style="padding:3px 9px">Remove</button></div><label>Frame label</label><input value="${f.name||''}" readonly><label>Tagged Product ID</label><div class="analytics-id">${f.pid||'None'} ${p?'· '+p.l:'· Not resolved'}</div></div>`}).join('')}
+       <div class="row"><input id="newFramePid" placeholder="Product ID"><button class="btn" data-a="addframe" style="flex:none">+ Add frame</button></div>
+       <button class="btn p" data-story="${c.id}" style="margin-top:10px">Preview story</button>`;
+  }
+ }
+ if(sub=='sched'){const ws=windows(c);b=`<p style="margin-top:0;color:var(--mut)">A component can have multiple active windows. Page Takeover overrides these windows while it is active.</p>${ws.map((w,i)=>`<div class="card" style="padding:10px"><div style="display:flex;justify-content:space-between;align-items:center"><b>Window ${i+1}</b>${ws.length>1?`<button class="btn" data-rmwin="${w.id}" style="padding:3px 9px">Remove</button>`:''}</div><div class="row"><div><label>Starts</label><input type="datetime-local" data-win="${w.id}" data-wf="start" value="${w.start}"></div><div><label>Expires</label><input type="datetime-local" data-win="${w.id}" data-wf="end" value="${w.end}"></div></div></div>`).join('')}<div class="row" style="align-items:center"><button class="btn" data-addwin="1">+ Add schedule window</button><span style="text-align:right">Status: <span class="badge b-${status(c)}">${status(c)}</span></span></div><button class="btn p" data-a="sch" style="margin-top:10px">${c.saved?'Save to draft':'Schedule component'}</button>`}
+ if(sub=='metrics'){const s=stats(c);b=`<div class="kpi"><div>Impressions<b>${s.imp.toLocaleString()}</b></div><div>CTR<b>${s.ctr}%</b></div><div>Conv. value<b>$${s.val.toLocaleString()}</b></div></div><p style="color:var(--mut);font-size:12px">Simulated, last 7 days.</p>`}
+ return`<div class="card"><b>${TYPES[c.type].n}</b> <span class="badge b-${status(c)}" style="float:right">${status(c)}</span>${tabs}${b}</div>`}
+function rank(){const r=S.comps.map(c=>({c,...stats(c)})).sort((a,b)=>b.ctr-a.ctr);
+ return`<table><tr><th>#</th><th>Component</th><th>Impr.</th><th>CTR</th><th>Conv. value</th></tr>${r.map((x,i)=>`<tr><td>${i+1}</td><td>${x.c.title}</td><td>${x.imp.toLocaleString()}</td><td>${x.ctr}%</td><td>$${x.val.toLocaleString()}</td></tr>`).join('')}</table>`}
+
+function pageScheduleView(){const p=S.pageSchedule,active=pageActive();return `<div class="card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:start"><div><b style="font-size:16px">Master Page Schedule</b><p style="color:var(--mut);margin:4px 0 0">Publish a fresh page for a major event without editing every component schedule.</p></div><span class="badge ${active?'b-Active':p.enabled?'b-Scheduled':'b-Draft'}">${active?'LIVE TAKEOVER':p.enabled?'Scheduled':'Off'}</span></div><label>Page version / event name</label><input data-pf="name" value="${p.name}"><div class="row"><div><label>Starts</label><input type="datetime-local" data-pf="start" value="${p.start}"></div><div><label>Ends</label><input type="datetime-local" data-pf="end" value="${p.end}"></div></div><label style="display:flex;gap:8px;align-items:center;color:var(--ink);font-size:13px"><input type="checkbox" data-pcheck="override" style="width:auto" ${p.override?'checked':''}>Override all individual component schedules during this window</label><div style="background:var(--soft);padding:10px;border-radius:12px;margin:12px 0;font-size:12px"><b>Runtime precedence</b><br>1. Master Page Takeover &nbsp;→&nbsp; 2. Component schedule windows &nbsp;→&nbsp; 3. Default page<br><span style="color:var(--mut)">When takeover expires, existing component schedules resume automatically.</span></div><button class="btn ${p.enabled?'':'p'}" data-page-toggle="1">${p.enabled?'Disable takeover':'Schedule page takeover'}</button></div>`}
+
+
+function approvalInboxHTML(){
+ let rows=S.approvals.slice();
+ if(S.approvalFilter!='All')rows=rows.filter(x=>x.status==S.approvalFilter);
+ if(S.approvalSearch){const q=S.approvalSearch.toLowerCase();rows=rows.filter(x=>`${x.component||''} ${x.detail||''} ${x.page} ${x.version} ${x.by} ${x.status}`.toLowerCase().includes(q))}
+ rows.sort((x,y)=>S.approvalSort=='Oldest'?x.id-y.id:y.id-x.id);
+ const pending=S.approvals.filter(x=>x.status=='Pending').length;
+ return `<div class="row" style="align-items:center"><div><h2 style="margin:0">Approval Inbox</h2><p style="color:var(--mut);margin:5px 0 0">Components submitted by Editors for review.</p></div><span class="badge b-InReview" style="flex:none">${pending} pending</span></div>
+ <div class="approval-toolbar"><input id="approvalSearch" value="${S.approvalSearch}" placeholder="Search component, requester, page…"><select id="approvalFilter">${['All','Pending','Approved','Changes requested'].map(x=>`<option ${S.approvalFilter==x?'selected':''}>${x}</option>`).join('')}</select><select id="approvalSort"><option ${S.approvalSort=='Newest'?'selected':''}>Newest</option><option ${S.approvalSort=='Oldest'?'selected':''}>Oldest</option></select></div>
+ <div style="overflow:auto"><table><thead><tr><th>Component</th><th>Details / Preview</th><th>Requested by</th><th>Status</th><th>Request date & time</th><th>Actions</th></tr></thead><tbody>
+ ${rows.length?rows.map(a=>`<tr><td><b>${a.component||'Page components'}</b><br><small>${a.page} · ${a.version}</small></td><td>${a.detail||`${a.components} components`}<br><button class="btn" data-toggleapproval="${a.id}" style="padding:3px 8px;margin-top:5px">${S.openApproval==a.id?'Hide preview':'View preview'}</button>${S.openApproval==a.id?`<div style="margin-top:7px;padding:8px;background:var(--bg);border-radius:8px;font-size:11px">📱 ${a.page}<br>🧩 ${a.components} components<br>🗓 ${a.window}${a.decision?`<br>💬 ${a.decision}`:''}</div>`:''}</td><td><b>${a.by}</b></td><td><span class="badge ${a.status=='Pending'?'b-InReview':''}">${a.status}</span></td><td>${a.at}</td><td>${a.status=='Pending'?`<div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn" data-changes="${a.id}" style="padding:4px 8px">Request changes</button><button class="btn p" data-approve="${a.id}" style="padding:4px 8px">Approve</button></div>`:'—'}</td></tr>`).join(''):`<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--mut)">No approval requests match these filters.</td></tr>`}
+ </tbody></table></div>`;
+}
+function roleAssignmentHTML(){
+ return `<div class="row" style="align-items:center"><div><h2 style="margin:0">Access Management</h2><p style="color:var(--mut);margin:5px 0 0">Add users, assign roles, or remove Experience Manager access.</p></div><button class="btn p" data-adduser="1" style="flex:none">+ Add new user</button></div>
+ <div class="card" style="padding:0;margin-top:14px;overflow:hidden">
+  <table style="margin:0"><thead><tr><th>Username</th><th>Email</th><th>Role</th><th>Action</th></tr></thead><tbody>
+  ${S.users.map(u=>`<tr><td><b>${u.name}</b></td><td>${u.email}</td><td><select data-userrole="${u.id}" style="min-width:140px">${['Editor','Approver','Admin'].map(r=>`<option ${u.role==r?'selected':''}>${r}</option>`).join('')}</select></td><td><button class="btn danger" data-deleteuser="${u.id}">Remove access</button></td></tr>`).join('')}
+  </tbody></table>
+ </div>`;
+}
+function renderLeft(){
+ const v=S.view;
+ let h='';
+ const full=['approve','access','dash','lib','camp','assets','ana','set'].includes(v);
+ $('#work').classList.toggle('fullpage',full);
+
+ switch(v){
+  case 'builder':
+   h=`<div class="tabs"><button data-tab="lib" class="${S.tab=='lib'?'on':''}">Components</button><button data-tab="cfg" class="${S.tab=='cfg'?'on':''}">Configure</button><button data-tab="page" class="${S.tab=='page'?'on':''}">Page schedule ${S.pageSchedule.enabled?'●':''}</button></div>`+(S.tab=='lib'?libView():S.tab=='page'?pageScheduleView():cfgView());
+   break;
+  case 'lib':
+   h=libView();
+   break;
+  case 'dash':{
+   const n=k=>S.comps.filter(c=>status(c)==k).length;
+   h=`<div class="kpi"><div>Components<b>${S.comps.length}</b></div><div>Active<b>${n('Active')}</b></div><div>Scheduled<b>${n('Scheduled')}</b></div></div><div class="card" style="margin-top:12px"><b>Home browse screen</b><p style="color:var(--mut)">Workflow: ${S.published?'Published':S.review?'Waiting for approval':'Draft'}.</p><button class="btn p" data-go="builder">Open Layout Builder</button></div><h3>Top performers</h3>${rank()}`;
+   break;
+  }
+  case 'camp':
+   h=`<div class="row" style="align-items:center"><div><h3 style="margin:0">Campaigns</h3><p style="color:var(--mut);margin:4px 0">Manage component schedules and page experiences.</p></div><button class="btn p" data-go="builder">Create experience</button></div><table><tr><th>Component</th><th>Status</th><th>Schedule</th></tr>${S.comps.map(c=>`<tr><td>${c.title||TYPES[c.type].n}</td><td><span class="badge b-${status(c)}">${status(c)}</span></td><td>${windows(c).length} window(s)</td></tr>`).join('')}</table>`;
+   break;
+  case 'assets':
+   h=assetView();
+   break;
+  case 'ana':
+   h=`<h3 style="margin-top:0">Component ranking</h3>${rank()}`;
+   break;
+  case 'approve':
+   if(S.role=='Editor'){S.view='dash';return renderLeft()}
+   h=approvalInboxHTML();
+   break;
+  case 'access':
+   if(S.role!='Admin'){S.view=S.role=='Approver'?'approve':'dash';return renderLeft()}
+   h=roleAssignmentHTML();
+   break;
+  case 'set':
+   h=`<div class="card"><b>Settings</b><p style="color:var(--mut)">Workspace preferences.</p><label>Theme</label><select id="theme"><option>Auto</option><option>Light</option><option>Dark</option></select></div>`;
+   break;
+  default:
+   S.view='dash';
+   return renderLeft();
+ }
+ $('#left').innerHTML=h;
+}
+function render(){renderNav();renderLeft();renderPhone();pageStatus()}
+const add=(t,i)=>{const c=mk(t);if(i==null)S.comps.push(c);else S.comps.splice(i,0,c);S.sel=c.id;S.view='builder';S.tab='cfg';S.sub='content';S.review=false;S.published=false;render();toast(TYPES[t].n+' added')};
+document.addEventListener('click',e=>{
+ const t=e.target;let x;
+
+
+ if(x=t.closest('[data-admintab]')){S.adminTab=x.dataset.admintab;render();return}
+ if(x=t.closest('[data-deleteuser]')){if(S.role!='Admin')return;const u=S.users.find(z=>z.id==+x.dataset.deleteuser);if(u&&confirm(`Delete ${u.name}?`)){S.users=S.users.filter(z=>z.id!=u.id);S.audit.push({at:new Date().toLocaleString(),text:`Admin deleted ${u.email}`});render();toast('User deleted')}return}
+ if(x=t.closest('[data-toggleapproval]')){S.openApproval=S.openApproval==+x.dataset.toggleapproval?null:+x.dataset.toggleapproval;render();return}
+ if(x=t.closest('[data-approve]')){if(S.role=='Editor')return;const a=S.approvals.find(z=>z.id==+x.dataset.approve);if(a){a.status='Approved';a.decision='Approved by '+S.role;S.published=true;S.review=false;S.audit.push({at:new Date().toLocaleString(),text:`${S.role} approved ${a.page} (${a.version})`});render();toast('Approved and ready for publish')}return}
+ if(x=t.closest('[data-changes]')){if(S.role=='Editor')return;const a=S.approvals.find(z=>z.id==+x.dataset.changes);if(a){const note=prompt('What should the editor change?','Please review content and scheduling.');if(note!==null){a.status='Changes requested';a.decision=note;S.review=false;S.audit.push({at:new Date().toLocaleString(),text:`${S.role} requested changes on ${a.page}`});render();toast('Sent back to editor')}}return}
+ if(x=t.closest('[data-apreview]')){toast('Previewing submitted page version');S.view='builder';render();return}
+ if(x=t.closest('[data-adduser]')){if(S.role!='Admin')return;const email=prompt('User email');if(email){const name=prompt('Username / display name',email.split('@')[0].replace(/[._]/g,' '));if(name!==null){const role=prompt('Role: Editor, Approver or Admin','Editor');const valid=['Editor','Approver','Admin'].includes(role)?role:'Editor';S.users.push({id:Date.now(),name:name||email,email,role:valid,status:'Active'});S.audit.push({at:new Date().toLocaleString(),text:`Admin added ${email} as ${valid}`});render();toast('User added')}}return}
+ if(x=t.closest('[data-toggleuser]')){const u=S.users.find(z=>z.id==+x.dataset.toggleuser);if(u){u.status=u.status=='Active'?'Inactive':'Active';S.audit.push({at:new Date().toLocaleString(),text:`Admin changed ${u.email} status to ${u.status}`});render()}return}
+ if(x=t.closest('[data-additem]')){const c=cur();c.staticItems=c.staticItems||[];c.staticItems.push({id:Date.now(),label:'New item',deepLink:'',assetId:c.asset});render();return}
+ if(x=t.closest('[data-rmitem]')){const c=cur();c.staticItems=(c.staticItems||[]).filter(i=>String(i.id)!==String(x.dataset.rmitem));render();return}
+ if(x=t.closest('[data-story]')){openStory(+x.dataset.story);return}
+ if(x=t.closest('[data-rmframe]')){const c=cur();c.storyFrames.splice(+x.dataset.rmframe,1);render();return}
+ if(x=t.closest('[data-a=addframe]')){const c=cur(),inp=$('#newFramePid'),pid=(inp?.value||'').trim();if(!pid)return toast('Enter a Product ID');c.storyFrames.push({name:'Story frame '+(c.storyFrames.length+1),pid});render();toast(CAT.some(p=>p.id==pid)?'Frame added; product resolved':'Frame added; Product ID not in catalogue');return}
+
+ if(x=t.closest('#nav [data-v]')){S.view=x.dataset.v;render();return}
+ if(x=t.closest('[data-tab]')){S.tab=x.dataset.tab;render();return}
+ if(x=t.closest('[data-sub]')){S.sub=x.dataset.sub;render();return}
+ if(x=t.closest('[data-addwin]')){const c=cur();c.schedules=windows(c);const id=Math.max(0,...c.schedules.map(w=>w.id||0))+1;c.schedules.push({id,start:d(15),end:d(16)});render();return}
+ if(x=t.closest('[data-rmwin]')){const c=cur();c.schedules=windows(c).filter(w=>w.id!=+x.dataset.rmwin);render();return}
+ if(x=t.closest('[data-page-toggle]')){S.pageSchedule.enabled=!S.pageSchedule.enabled;render();toast(S.pageSchedule.enabled?'Page takeover scheduled':'Page takeover disabled');return}
+ if(x=t.closest('[data-add]')){add(x.dataset.add);return}
+ if(x=t.closest('[data-go]')){S.view=x.dataset.go;render();return}
+ if(x=t.closest('[data-open]')){S.sel=+x.dataset.open;S.view='builder';S.tab='cfg';S.sub='sched';render();return}
+ if(x=t.closest('[data-asset]')){const c=cur(),a=asset(+x.dataset.asset);c.asset=a.id;if(!a.sizes.includes(c.size))c.size=a.sizes[0];render();return}
+ if(x=t.closest('[data-size]')){cur().size=x.dataset.size;render();return}
+ if(x=t.closest('[data-alib]')){S.asel=+x.dataset.alib;render();return}
+ if(x=t.closest('[data-use]')){const c=cur(),a=asset(S.asel);c.asset=a.id;if(!a.sizes.includes(c.size))c.size=a.sizes[0];S.view='builder';S.tab='cfg';S.sub='content';render();toast('Banner applied');return}
+ if(x=t.closest('[data-adel]')){const id=S.asel;AS=AS.filter(a=>a.id!=id);S.comps.forEach(c=>{if(c.asset==id){c.asset=AS[0].id;c.size=AS[0].sizes[0]}});S.asel=AS[0].id;render();toast('Banner deleted');return}
+ if(x=t.closest('#plat [data-v]')){S.plat=x.dataset.v;renderPhone();toast(S.plat=='ios'?'iPhone 15 Pro viewport':'Android Pixel viewport');return}
+ if(x=t.closest('#mode [data-v]')){S.mode=x.dataset.v;renderPhone();return}
+ if(x=t.closest('[data-cmode]')){cur().contentMode=x.dataset.cmode;render();return}
+  if(x=t.closest('[data-src]')){cur().src=x.dataset.src;render();return}
+ if(x=t.closest('[data-addid]')){const c=cur();c.idsText=(c.idsText?c.idsText.replace(/[,\s]+$/,'')+', ':'')+x.dataset.addid;render();return}
+ if(x=t.closest('[data-a=pull]')){const c=cur();c.pulledAt=new Date().toLocaleString();render();toast('Pulled '+BATCH[c.batchSrc].ids.length+' products from '+BATCH[c.batchSrc].n);return}
+ if(x=t.closest('[data-a=refresh]')){render();toast('Feed refreshed');return}
+ if(x=t.closest('[data-a=sch]')){const c=cur();c.saved=!c.saved;render();toast(c.saved?'Campaign '+status(c).toLowerCase():'Moved back to draft');return}
+ const mc=t.closest('.mc');
+ if(mc){const id=+mc.dataset.id,i=S.comps.findIndex(c=>c.id==id),a=t.closest('[data-a]')?.dataset.a;
+  if(a=='del'){S.comps.splice(i,1);S.sel=null;render();toast('Component deleted');return}
+  if(a=='up'&&i>0){[S.comps[i-1],S.comps[i]]=[S.comps[i],S.comps[i-1]];render();return}
+  if(a=='dn'&&i<S.comps.length-1){[S.comps[i+1],S.comps[i]]=[S.comps[i],S.comps[i+1]];render();return}
+  if(!a){S.sel=id;S.view='builder';S.tab='cfg';render()}}
+});
+document.addEventListener('input',e=>{
+ if(e.target.id=='approvalSearch'){S.approvalSearch=e.target.value;renderLeft();return}
+if(e.target.dataset.pf){S.pageSchedule[e.target.dataset.pf]=e.target.value;renderPhone();return}
+ if(e.target.dataset.win){const c=cur(),w=windows(c).find(x=>x.id==+e.target.dataset.win);if(w)w[e.target.dataset.wf]=e.target.value;renderPhone();return}
+ if(e.target.dataset.an){asset(S.asel).name=e.target.value;renderPhone();return}
+ if(e.target.dataset.tog){const a=asset(S.asel),z=e.target.dataset.tog;if(a.sizes.includes(z)){if(a.sizes.length>1)a.sizes=a.sizes.filter(k=>k!=z)}else a.sizes.push(z);S.comps.forEach(c=>{if(c.asset==a.id&&!a.sizes.includes(c.size))c.size=a.sizes[0]});render();return}
+ const f=e.target.dataset.f,c=cur();if(!f||!c)return;c[f]=e.target.value;renderPhone();if(f=='idsText')$('#res').innerHTML=resHTML(c);if(f=='start'||f=='end')pageStatus();if(f=='repeatDays'){c.repeatDays=Math.max(0,Math.min(90,+e.target.value||0));renderLeft()}});
+document.addEventListener('change',e=>{
+ if(e.target.id=='approvalFilter'){S.approvalFilter=e.target.value;renderLeft();return}
+ if(e.target.id=='approvalSort'){S.approvalSort=e.target.value;renderLeft();return}
+
+ if(e.target.dataset.item){const c=cur(),it=(c.staticItems||[]).find(x=>String(x.id)===String(e.target.dataset.item));if(it){it[e.target.dataset.if]=e.target.value;renderPhone()}return}
+
+ if(e.target.dataset.userrole){const u=S.users.find(z=>z.id==+e.target.dataset.userrole);if(u&&S.role=='Admin'){const old=u.role;u.role=e.target.value;S.audit.push({at:new Date().toLocaleString(),text:`Admin changed ${u.email}: ${old} → ${u.role}`});render();toast('Role updated')}return}
+if(e.target.dataset.pcheck){S.pageSchedule[e.target.dataset.pcheck]=e.target.checked;render();return}
+ if(e.target.id=='csv'){const f=e.target.files[0];if(!f)return;const fr=new FileReader();fr.onload=()=>{const c=cur();c.csvIds=[...new Set(String(fr.result).match(/\d{4,}/g)||[])];c.csvName=f.name;render();toast(c.csvIds.length+' product IDs imported')};fr.readAsText(f);return}
+ if(e.target.id=='up'){const f=e.target.files[0];if(!f)return;const fr=new FileReader();fr.onload=()=>{const a={id:aid++,name:f.name.replace(/\.[^.]+$/,''),e:'🖼️',col:'#888',img:fr.result,sizes:['2:1','1:1','16:9','9:16']};AS.push(a);S.asel=a.id;render();toast('Uploaded. Auto-cropped to 4 sizes.')};fr.readAsDataURL(f);return}
+ const f=e.target.dataset.f;if(f&&['link','feed','batchSrc'].includes(f)){if(f=='batchSrc')cur().pulledAt=null;renderLeft();renderPhone()}
+ if(e.target.id=='role'){const prev=S.view;S.role=e.target.value;if(S.role=='Editor'&&['approve','access'].includes(prev))S.view='dash';else if(S.role=='Approver'&&prev=='access')S.view='approve';render();toast('Role: '+S.role)}
+ if(e.target.id=='persona'){S.persona=e.target.value;renderPhone()}
+ if(e.target.id=='theme'){const v=e.target.value;if(v=='Auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.dataset.theme=v.toLowerCase()}});
+let drag=null;
+document.addEventListener('dragstart',e=>{const m=e.target.closest?.('.mc'),l=e.target.closest?.('[data-lib]');drag=m?{id:+m.dataset.id}:l?{lib:l.dataset.lib}:null;e.dataTransfer.setData('text','x');e.dataTransfer.effectAllowed='move'});
+document.addEventListener('dragover',e=>{const m=e.target.closest?.('.mc'),f=e.target.closest?.('#feed');if(f){e.preventDefault();document.querySelectorAll('.mc.over').forEach(x=>x.classList.remove('over'));m?.classList.add('over')}});
+document.addEventListener('drop',e=>{const f=e.target.closest?.('#feed');if(!f||!drag)return;e.preventDefault();const m=e.target.closest('.mc');let i=m?S.comps.findIndex(c=>c.id==+m.dataset.id):S.comps.length;
+ if(drag.lib){add(drag.lib,i)}else{const from=S.comps.findIndex(c=>c.id==drag.id),[c]=S.comps.splice(from,1);if(from<i)i--;S.comps.splice(i,0,c);render();toast('Reordered')}drag=null});
+document.addEventListener('dragend',()=>document.querySelectorAll('.mc.over').forEach(x=>x.classList.remove('over')));
+$('#pub').onclick=()=>{
+ if(S.role=='Editor'){
+   if(!S.review){S.review=true;const a={id:Date.now(),page:'Home browse page',version:'Draft v'+(S.approvals.length+1),by:'Current Editor',at:new Date().toLocaleString(),components:S.comps.length,window:'Uses configured page/component schedule',status:'Pending',decision:''};S.approvals.push(a);S.audit.push({at:new Date().toLocaleString(),text:`Editor submitted ${a.page} (${a.version}) for approval`});toast('Submitted page version for approval')}
+ } else {
+   S.published=true;S.review=false;S.comps.forEach(c=>c.saved=true);S.audit.push({at:new Date().toLocaleString(),text:`${S.role} published current page version`});toast('Published to iOS and Android');
+ }render()
+};
+$('#prev').onclick=()=>{const l='https://preview.safeway-xm.internal/s/'+Math.random().toString(36).slice(2,8);navigator.clipboard?.writeText(l).catch(()=>{});toast('Staging link copied: '+l)};
+
+let storyState={c:null,i:0};
+function openStory(id){const c=S.comps.find(x=>x.id==id);if(!c||c.type!='story')return;storyState={c,i:0};drawStory();$('#storyModal').classList.add('on')}
+function drawStory(){const c=storyState.c,fs=c?.storyFrames||[];if(!fs.length){$('#storyFrame').innerHTML='<div class="story-content"><h3>No frames yet</h3><p>Add frames in Content configuration.</p></div>';return}storyState.i=Math.max(0,Math.min(storyState.i,fs.length-1));const f=fs[storyState.i],p=CAT.find(x=>x.id==f.pid);$('#storyProgress').innerHTML=fs.map((_,i)=>`<i class="${i<=storyState.i?'on':''}"></i>`).join('');$('#storyFrame').innerHTML=`<div class="story-content"><div style="font-size:12px;margin-bottom:8px">QUICK LOOK · ${storyState.i+1}/${fs.length}</div><h3>${f.name}</h3><p>${storyState.i==0?'Rainy-day picks, ready in a few taps.':'Keep shopping without leaving the story.'}</p>${p?`<button class="product-sticker" data-storyadd="${p.id}"><span style="font-size:24px">${p.e}</span><span>${p.l}<small>$${p.price.toFixed(2)} · Tap to add</small></span></button>`:`<div class="product-sticker">⚠ Product ${f.pid||''} not found</div>`}</div>`}
+function closeStory(){$('#storyModal').classList.remove('on')}
+$('#storyClose').onclick=closeStory;$('#storyPrev').onclick=()=>{storyState.i--;drawStory()};$('#storyNext').onclick=()=>{if(storyState.i<(storyState.c?.storyFrames||[]).length-1){storyState.i++;drawStory()}else closeStory()};
+$('#storyModal').addEventListener('click',e=>{const a=e.target.closest('[data-storyadd]');if(a)toast('Added Product '+a.dataset.storyadd+' to cart')});
+
+function openAI(seed=''){if(seed)$('#aiPrompt').value=seed;$('#aiDrawer').classList.add('on')}
+$('#aiOpen').onclick=()=>openAI($('#aiQuick').value);
+$('#aiQuick').addEventListener('keydown',e=>{if(e.key==='Enter')openAI(e.target.value)});
+$('#aiClose').onclick=()=>$('#aiDrawer').classList.remove('on');
+$('#aiGenerate').onclick=()=>{
+ const q=$('#aiPrompt').value.trim();if(!q)return toast('Describe the experience first');
+ $('#aiState').innerHTML='<div class="ai-thinking">Parsing intent <i></i><i></i><i></i></div>';$('#aiProposal').innerHTML='';
+ setTimeout(()=>{
+   const targeting=/gold|member|target/i.test(q);
+   $('#aiState').innerHTML='';
+   $('#aiProposal').innerHTML=`<div class="card"><b>Proposed experience</b><p style="font-size:12px;color:var(--mut)">Intent understood: rainy/comfort merchandising → promotional hero + product rail + immersive Quick Look.</p><table><tr><td>1</td><td>Rainy Weekend hero</td><td>Static + search deep link</td></tr><tr><td>2</td><td>Comfort Food Picks</td><td>Product IDs / catalogue</td></tr><tr><td>3</td><td>Quick Look story</td><td>3 shoppable frames</td></tr></table>${targeting?'<p style="font-size:12px"><b>Targeting detected:</b> Gold members <span class="badge">Future capability</span><br><span style="color:var(--mut)">Layout can be generated now; targeting will not be applied.</span></p>':''}<button class="btn p" id="aiApply" style="width:100%">Apply proposed layout</button></div>`;
+   $('#aiApply').onclick=()=>{
+     const b=mk('banner',{title:'Rainy Weekend Comfort',sub:'Cozy favorites for a rainy weekend.',link:'search',linkVal:'safeway://search?s=soup%20comfort%20snacks',saved:false});
+     const p=mk('car25',{title:'Comfort Food Picks',src:'manual',idsText:'101020, 101013, 101018, 101016, 101003',saved:false});
+     const st=mk('story',{title:'Rainy Day Quick Look',saved:false});
+     S.comps=[b,p,st];S.sel=st.id;S.view='builder';S.tab='cfg';S.sub='content';S.review=false;S.published=false;render();$('#aiDrawer').classList.remove('on');toast('AI layout applied — 3 components created');
+   };
+ },700);
+};
+
+render();
+</script></body></html>
